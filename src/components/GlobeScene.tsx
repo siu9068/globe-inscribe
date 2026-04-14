@@ -1,6 +1,7 @@
 import { OrbitControls, useTexture, Stars } from '@react-three/drei'
 import { GLOBE_RADIUS } from '../constants'
 import { PhraseLabel } from './PhraseLabel'
+import { SpaceObjects } from './SpaceObjects'
 import type { Phrase } from '../types/phrase'
 
 interface GlobeSceneProps {
@@ -37,6 +38,9 @@ export function GlobeScene({ phrases }: GlobeSceneProps) {
           metalness={0}
         />
       </mesh>
+
+      {/* 배경 우주 천체 */}
+      <SpaceObjects />
 
       {/* 글귀 레이블 목록 */}
       {phrases.map((phrase) => (
