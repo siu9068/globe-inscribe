@@ -139,24 +139,24 @@ function Sun() {
   })
 
   return (
-    <group position={[18, 6, -22]}>
+    <group position={[32, 10, -38]}>
       {/* 외부 글로우 (Additive blending) */}
-      {[3.2, 2.6, 2.1].map((r, i) => (
+      {[9.5, 7.8, 6.4].map((r, i) => (
         <mesh key={i}>
           <sphereGeometry args={[r, 24, 24]} />
           <meshBasicMaterial
             color={(['#ff2200', '#ff6600', '#ffaa00'] as const)[i]}
             transparent
-            opacity={[0.025, 0.045, 0.07][i]}
+            opacity={[0.02, 0.035, 0.055][i]}
             depthWrite={false}
             blending={THREE.AdditiveBlending}
           />
         </mesh>
       ))}
 
-      {/* 코로나 / 플레어 셰이더 레이어 */}
+      {/* 코로나 / 불꽃 셰이더 레이어 */}
       <mesh>
-        <sphereGeometry args={[1.85, 64, 64]} />
+        <sphereGeometry args={[5.5, 64, 64]} />
         <shaderMaterial
           vertexShader={CORONA_VERT}
           fragmentShader={CORONA_FRAG}
@@ -170,7 +170,7 @@ function Sun() {
 
       {/* 태양 본체 — 실제 텍스처 + 자체 발광 */}
       <mesh ref={meshRef}>
-        <sphereGeometry args={[1.4, 64, 64]} />
+        <sphereGeometry args={[4.5, 64, 64]} />
         <meshStandardMaterial
           map={sunTex}
           emissiveMap={sunTex}
@@ -180,7 +180,7 @@ function Sun() {
         />
       </mesh>
 
-      <pointLight intensity={2.5} color="#ffe880" distance={80} decay={1.2} />
+      <pointLight intensity={3.0} color="#ffe880" distance={120} decay={1.2} />
     </group>
   )
 }
@@ -200,7 +200,7 @@ function Jupiter() {
     <group position={[-16, 4, -18]}>
       {/* 대기 글로우 */}
       <mesh>
-        <sphereGeometry args={[0.96, 24, 24]} />
+        <sphereGeometry args={[1.52, 24, 24]} />
         <meshBasicMaterial
           color="#cc8855"
           transparent
@@ -209,7 +209,7 @@ function Jupiter() {
         />
       </mesh>
       <mesh ref={meshRef}>
-        <sphereGeometry args={[0.9, 64, 64]} />
+        <sphereGeometry args={[1.4, 64, 64]} />
         <meshStandardMaterial map={jupTex} roughness={0.8} metalness={0} />
       </mesh>
     </group>
@@ -234,7 +234,7 @@ function Saturn() {
     <group ref={groupRef} position={[12, -7, -16]} rotation={[0.3, 0.5, 0.2]}>
       {/* 대기 글로우 */}
       <mesh>
-        <sphereGeometry args={[0.65, 24, 24]} />
+        <sphereGeometry args={[1.2, 24, 24]} />
         <meshBasicMaterial
           color="#ccaa66"
           transparent
@@ -243,11 +243,11 @@ function Saturn() {
         />
       </mesh>
       <mesh>
-        <sphereGeometry args={[0.6, 64, 64]} />
+        <sphereGeometry args={[1.1, 64, 64]} />
         <meshStandardMaterial map={satTex} roughness={0.8} metalness={0} />
       </mesh>
       <mesh rotation={[Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[0.82, 1.55, 128]} />
+        <ringGeometry args={[1.5, 2.85, 128]} />
         <meshBasicMaterial
           map={ringTex}
           side={THREE.DoubleSide}
@@ -279,15 +279,15 @@ function Earth() {
   return (
     <group position={[-10, -6, -10]}>
       <mesh>
-        <sphereGeometry args={[0.50, 24, 24]} />
+        <sphereGeometry args={[0.40, 24, 24]} />
         <meshBasicMaterial color="#3366ff" transparent opacity={0.07} depthWrite={false} />
       </mesh>
       <mesh ref={earthRef}>
-        <sphereGeometry args={[0.45, 64, 64]} />
+        <sphereGeometry args={[0.35, 64, 64]} />
         <meshStandardMaterial map={earthTex} roughness={0.7} metalness={0} />
       </mesh>
       <mesh ref={cloudRef}>
-        <sphereGeometry args={[0.457, 64, 64]} />
+        <sphereGeometry args={[0.357, 64, 64]} />
         <meshStandardMaterial map={cloudTex} transparent opacity={0.55} depthWrite={false} roughness={1} />
       </mesh>
     </group>
