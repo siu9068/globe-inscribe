@@ -16,8 +16,10 @@ export function GlobeScene({ phrases }: GlobeSceneProps) {
 
   return (
     <>
-      {/* 별이 가득한 우주 배경 */}
-      <Stars radius={100} depth={60} count={4000} factor={4} fade />
+      {/* 별이 가득한 우주 배경 — 다양한 크기 레이어 */}
+      <Stars radius={100} depth={60} count={3000} factor={1.5} fade />
+      <Stars radius={120} depth={50} count={800} factor={5} fade />
+      <Stars radius={80} depth={40} count={200} factor={12} fade />
 
       {/* 달 표면을 비추는 태양광 — 한쪽에서만 강하게 */}
       <ambientLight intensity={0.08} />

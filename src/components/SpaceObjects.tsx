@@ -83,49 +83,45 @@ const CORONA_FRAG = /* glsl */ `
   void main(){
     vec3 n = normalize(vPosition);
     float viewDot = max(dot(vNormal, vec3(0.0, 0.0, 1.0)), 0.0);
-
-    // 림 글로우 — 가장자리에서 코로나 발현
     float edge = 1.0 - viewDot;
-    float corona = pow(edge, 2.0);
+    float t = uTime;
 
-    // 코로나 구조 노이즈
-    float n1 = fbm3(n * 3.0 + vec3(uTime * 0.06, uTime * 0.02, 0.0));
-    float n2 = snoise3(n * 6.0 - vec3(0.0, uTime * 0.04, uTime * 0.03));
+    // 베이스 코로나 — 가장자리 글로우
+    float corona = pow(edge, 1.8);
 
-    // 태양 홍염(prominence) — 3개 방향에서 동적 분출
-    float prominence = 0.0;
-    for(int i = 0; i < 4; i++){
+    // 유기적 연기/불꽃 노이즈 (다층 난류)
+    float smoke1 = fbm3(n * 2.5 + vec3(0.0, t * 0.07, t * 0.03));
+    float smoke2 = fbm3(n * 1.8 - vec3(t * 0.04, 0.0, t * 0.05));
+    float smoke3 = snoise3(n * 4.0 + vec3(t * 0.09, t * 0.06, 0.0));
+    float turbulence = smoke1 * 0.5 + smoke2 * 0.3 + smoke3 * 0.2;
+
+    // 불꽃 플룸 — 유기적으로 분출되는 연기
+    float plume = 0.0;
+    for(int i = 0; i < 5; i++){
       float fi = float(i);
-      vec3 dir = normalize(vec3(
-        sin(uTime * 0.035 + fi * 2.094),
-        cos(uTime * 0.025 + fi * 1.571),
-        sin(uTime * 0.030 + fi * 3.0)
+      vec3 pDir = normalize(vec3(
+        sin(fi * 1.256 + t * 0.02),
+        cos(fi * 0.942 + t * 0.015),
+        sin(fi * 2.094 + t * 0.018)
       ));
-      float d = max(dot(n, dir), 0.0);
-      prominence += pow(d, 16.0) * edge * 2.0;
+      float align = max(dot(n, pDir), 0.0);
+      float pNoise = snoise3(n * 3.5 + pDir * t * 0.04);
+      plume += pow(align, 6.0) * edge * (0.6 + pNoise * 0.4);
     }
 
-    // 플레어 스트리크 — 방사형 광선
-    float angle = atan(n.y, n.x);
-    float flareRay = 0.0;
-    for(int i = 0; i < 6; i++){
-      float fi = float(i);
-      float rayAngle = fi * 1.047 + uTime * 0.02 + sin(uTime * 0.1 + fi) * 0.3;
-      float diff = abs(mod(angle - rayAngle + 3.14159, 6.28318) - 3.14159);
-      flareRay += smoothstep(0.15, 0.0, diff) * edge * 0.4;
-    }
+    float intensity = corona * (0.35 + turbulence * 0.4) + plume * 0.5;
 
-    float intensity = corona * (0.5 + n1 * 0.3 + n2 * 0.2) + prominence + flareRay;
+    // 불꽃 색상 — 붉은 연기/화염
+    vec3 fireHot  = vec3(1.0, 0.70, 0.20);
+    vec3 fireMid  = vec3(1.0, 0.35, 0.05);
+    vec3 fireCool = vec3(0.55, 0.10, 0.02);
+    vec3 col = mix(fireHot, fireMid, edge * 0.6 + turbulence * 0.15);
+    col = mix(col, fireCool, pow(edge, 0.6) * 0.5);
 
-    vec3 hotCol  = vec3(1.0, 0.95, 0.70);
-    vec3 warmCol = vec3(1.0, 0.50, 0.10);
-    vec3 col = mix(hotCol, warmCol, pow(edge, 0.5) * 0.6 + n1 * 0.2);
+    intensity *= 1.0 + 0.04 * sin(t * 1.2);
 
-    // 펄스
-    intensity *= 1.0 + 0.08 * sin(uTime * 1.5);
-
-    float alpha = clamp(intensity * 1.3, 0.0, 1.0);
-    gl_FragColor = vec4(col * intensity * 2.0, alpha);
+    float alpha = clamp(intensity * 1.1, 0.0, 0.8);
+    gl_FragColor = vec4(col * intensity * 1.5, alpha);
   }
 `
 
@@ -256,6 +252,7 @@ function Saturn() {
           map={ringTex}
           side={THREE.DoubleSide}
           transparent
+          opacity={0.25}
           depthWrite={false}
         />
       </mesh>
