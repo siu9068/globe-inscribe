@@ -1,5 +1,3 @@
-import { useRef } from 'react'
-import { Mesh } from 'three'
 import { OrbitControls } from '@react-three/drei'
 import { GLOBE_RADIUS } from '../constants'
 import { PhraseLabel } from './PhraseLabel'
@@ -10,15 +8,13 @@ interface GlobeSceneProps {
 }
 
 export function GlobeScene({ phrases }: GlobeSceneProps) {
-  const meshRef = useRef<Mesh>(null)
-
   return (
     <>
       <ambientLight intensity={0.6} />
       <directionalLight position={[5, 5, 5]} intensity={0.8} />
 
       {/* 구체 메시 */}
-      <mesh ref={meshRef}>
+      <mesh>
         <sphereGeometry args={[GLOBE_RADIUS, 64, 64]} />
         <meshStandardMaterial
           color="#1a1a2e"
