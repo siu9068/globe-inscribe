@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { preloadFont } from 'troika-three-text'
 import { GlobeScene } from './GlobeScene'
@@ -14,9 +15,11 @@ export function Globe({ phrases }: GlobeProps) {
   return (
     <Canvas
       camera={{ position: [0, 0, 5], fov: 60 }}
-      style={{ background: '#0a0a1a' }}
+      style={{ background: '#000008' }}
     >
-      <GlobeScene phrases={phrases} />
+      <Suspense fallback={null}>
+        <GlobeScene phrases={phrases} />
+      </Suspense>
     </Canvas>
   )
 }

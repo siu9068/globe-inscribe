@@ -1,4 +1,4 @@
-import { OrbitControls } from '@react-three/drei'
+import { OrbitControls, useTexture, Stars } from '@react-three/drei'
 import { GLOBE_RADIUS } from '../constants'
 import { PhraseLabel } from './PhraseLabel'
 import type { Phrase } from '../types/phrase'
@@ -8,31 +8,33 @@ interface GlobeSceneProps {
 }
 
 export function GlobeScene({ phrases }: GlobeSceneProps) {
+  const [moonMap, bumpMap] = useTexture([
+    '/textures/moon.jpg',
+    '/textures/moon_bump.jpg',
+  ])
+
   return (
     <>
-      <ambientLight intensity={0.6} />
-      <directionalLight position={[5, 5, 5]} intensity={0.8} />
+      {/* 별이 가득한 우주 배경 */}
+      <Stars radius={100} depth={60} count={4000} factor={4} fade />
 
-      {/* 구체 메시 */}
+      {/* 달 표면을 비추는 태양광 — 한쪽에서만 강하게 */}
+      <ambientLight intensity={0.08} />
+      <directionalLight
+        position={[6, 3, 4]}
+        intensity={2.2}
+        color="#fffbe8"
+      />
+
+      {/* 달 구체 — 텍스처 + 범프맵으로 분화구 깊이감 */}
       <mesh>
-        <sphereGeometry args={[GLOBE_RADIUS, 64, 64]} />
+        <sphereGeometry args={[GLOBE_RADIUS, 128, 128]} />
         <meshStandardMaterial
-          color="#1a1a2e"
-          roughness={0.8}
-          metalness={0.2}
-          transparent
-          opacity={0.85}
-        />
-      </mesh>
-
-      {/* 와이어프레임 오버레이 */}
-      <mesh>
-        <sphereGeometry args={[GLOBE_RADIUS, 32, 32]} />
-        <meshBasicMaterial
-          color="#4d96ff"
-          wireframe
-          transparent
-          opacity={0.08}
+          map={moonMap}
+          bumpMap={bumpMap}
+          bumpScale={0.25}
+          roughness={1}
+          metalness={0}
         />
       </mesh>
 
@@ -48,7 +50,7 @@ export function GlobeScene({ phrases }: GlobeSceneProps) {
         minDistance={3}
         maxDistance={8}
         autoRotate
-        autoRotateSpeed={0.5}
+        autoRotateSpeed={0.3}
       />
     </>
   )
