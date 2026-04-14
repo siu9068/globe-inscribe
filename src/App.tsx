@@ -2,10 +2,16 @@ import { usePhrases } from './hooks/usePhrases'
 import { Globe } from './components/Globe'
 import { PhraseInput } from './components/PhraseInput'
 
+const SECRET_CLEAR = '광복이가지운다'
+
 export default function App() {
-  const { phrases, insertPhrase } = usePhrases()
+  const { phrases, insertPhrase, clearAllPhrases } = usePhrases()
 
   const handleSubmit = async (text: string) => {
+    if (text === SECRET_CLEAR) {
+      await clearAllPhrases()
+      return
+    }
     const { error } = await insertPhrase(text)
     if (error) {
       console.error('글귀 저장 실패:', error)

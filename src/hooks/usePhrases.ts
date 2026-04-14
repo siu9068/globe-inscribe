@@ -55,7 +55,16 @@ export function usePhrases() {
     return { error }
   }
 
+  const clearAllPhrases = async () => {
+    const { error } = await supabase
+      .from('phrases')
+      .delete()
+      .not('id', 'is', null)
+    if (!error) setPhrasesById({})
+    return { error }
+  }
+
   const phrases = Object.values(phrasesById)
 
-  return { phrases, insertPhrase }
+  return { phrases, insertPhrase, clearAllPhrases }
 }
